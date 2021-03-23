@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">SideProject</string>
+    <string name="side_project">jjunCoder\'s Side Project</string>
+    <string name="earth_quake_app">Earth Quake App</string>
+    <string name="compass_app_name">Compass App</string>
+
+    <string name="title_activity_scrolling">ScrollingActivity</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_compass">CompassActivity</string>
+
+    <string name="cardinal_north">N</string>
+    <string name="cardinal_east">E</string>
+    <string name="cardinal_south">S</string>
+    <string name="cardinal_west">W</string>
+</resources>

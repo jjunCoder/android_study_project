@@ -2,8 +2,16 @@ package com.jjuncoder.sideproject.earthquake.view
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.media.MediaScannerConnection
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
+import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat.startActivity
@@ -11,7 +19,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.jjuncoder.sideproject.databinding.ActivityEarthQuakeBinding
 import com.jjuncoder.sideproject.earthquake.model.Earthquake
 import com.jjuncoder.sideproject.earthquake.viewmodel.EarthquakeViewModel
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 import java.util.*
+
 
 class EarthQuakeActivity : AppCompatActivity() {
     companion object {
@@ -45,6 +57,9 @@ class EarthQuakeActivity : AppCompatActivity() {
         binding.swipeRefreshView.setOnRefreshListener {
             viewModel.updateEarthquakeData()
         }
+        binding.captureButton.setOnClickListener {
+            captureListViewToImageAndSend()
+        }
     }
 
     private fun initObserver() {
@@ -62,6 +77,72 @@ class EarthQuakeActivity : AppCompatActivity() {
             }
         }
         binding.swipeRefreshView.isRefreshing = false
+    }
+
+    private fun captureListViewToImageAndSend() {
+        val pictureFile = saveBitMap(this, binding.eqRecyclerView)
+        val outputUri = Uri.fromFile(pictureFile)
+        Log.i("EarthQuakeActivity", "outputUri : $outputUri")
+        val intent = Intent(Intent.ACTION_SEND_MULTIPLE).apply {
+            type = "*/*"
+            putExtra(Intent.EXTRA_STREAM, outputUri)
+        }
+        startActivity(Intent.createChooser(intent, "공유 테스트"))
+    }
+
+    private fun saveBitMap(context: Context, drawView: View): File? {
+        val externalFileDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        Log.i("EarthQuakeActivity", "externalFileDir : $externalFileDir")
+
+        val pictureFileDir = File(externalFileDir, "sideproject")
+        if (!pictureFileDir.exists()) {
+            val isDirectoryCreated: Boolean = pictureFileDir.mkdirs()
+            if (!isDirectoryCreated) Log.i("EarthQuakeActivity", "Can't create directory to save the image")
+            return null
+        }
+
+        val filename: String = pictureFileDir.path + File.separator + System.currentTimeMillis().toString() + ".jpg"
+        val pictureFile = File(filename)
+        val bitmap = getBitmapFromView(drawView)
+        try {
+            pictureFile.createNewFile()
+            FileOutputStream(pictureFile).use {
+                bitmap!!.compress(Bitmap.CompressFormat.PNG, 100, it)
+                it.flush()
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+            Log.i("EarthQuakeActivity", "There was an issue saving the image.")
+        }
+
+        scanGallery(context, pictureFile.absolutePath)
+        return pictureFile
+    }
+
+    private fun getBitmapFromView(view: View): Bitmap? {
+        Log.i("EarthQuakeActivity", "view width : ${view.width} , height : ${view.height}")
+        //Define a bitmap with the same size as the view
+        val returnedBitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+        //Bind a canvas to it
+        val canvas = Canvas(returnedBitmap)
+        //Draw the view's background
+        view.background?.draw(canvas) ?: canvas.drawColor(Color.WHITE)
+        // draw the view on the canvas
+        view.draw(canvas)
+        //return the bitmap
+        return returnedBitmap
+    }
+
+    private fun scanGallery(context: Context, path: String) {
+        try {
+            MediaScannerConnection.scanFile(context, arrayOf(path), null) { inputPath, outputUri ->
+                Log.i("EarthQuakeActivity", "Scan completed. outputPath : $inputPath , outputUri : $outputUri")
+                Toast.makeText(context, "Scan completed. outputUri : $outputUri", Toast.LENGTH_SHORT).show()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Log.i("EarthQuakeActivity", "There was an issue scanning gallery.")
+        }
     }
 }
 

@@ -4,6 +4,8 @@
     <dimen name="recycler_view_margin">16dp</dimen>
     <dimen name="text_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="main_app_btn_height">100dp</dimen>
+    <dimen name="main_app_btn_text_size">20dp</dimen>
     <!--
     Because the window insets on round devices are larger than 15dp, this padding only applies
     to square screens.

@@ -1,26 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+
+    <ScrollView
+        android:id="@+id/background_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".gesture.ImageGestureTestActivity">
+        android:layout_height="match_parent">
 
-        <com.jjuncoder.sideproject.gesture.widget.zoom.ImageViewTouch
-            android:id="@+id/imageTouchView"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:src="@drawable/ic_launcher_background.xml"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        <LinearLayout
+            android:id="@+id/layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/design_default_color_secondary_variant"
+            android:orientation="vertical"
+            tools:context=".gesture.ImageGestureTestActivity">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <com.jjuncoder.sideproject.gesture.GestureImageView
+                android:id="@+id/imageTouchView"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_margin="10dp"
+                android:src="@drawable/iu" />
+
+            <ImageView
+                android:id="@+id/test_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/iu" />
+
+        </LinearLayout>
+    </ScrollView>
 </layout>
